@@ -50,12 +50,14 @@ int main()
 {
     Geometry::RegisterGeometry("Sphere", new Sphere());
 
-    Material* blue  = Material::RegisterMaterial(     "ClearGlass", new Glass(Vector3(1.0f, 1.0f, 1.0f), 1.5f));
-    Material* red   = Material::RegisterMaterial("BlaWhiteCheckLa", new Lambertian(Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f)));
-    Material* green = Material::RegisterMaterial("EarthLambertian", new Lambertian("earthmap.bmp"));
-    Material* metal = Material::RegisterMaterial(          "Metal", new Metal(Vector3(1.0f, 1.0f, 1.0f), 0.01f));
+    Material* blue   = Material::RegisterMaterial(     "ClearGlass", new Glass(Vector3(1.0f, 1.0f, 1.0f), 1.5f));
+    Material* red    = Material::RegisterMaterial("BlaWhiteCheckLa", new Lambertian(Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f)));
+    // Material* red    = Material::RegisterMaterial("BlaWhiteCheckLa", new Lambertian("uvtex.png"));
+    Material* green  = Material::RegisterMaterial("EarthLambertian", new Lambertian("earthmap.bmp"));
+    Material* metal  = Material::RegisterMaterial(          "Metal", new Metal(Vector3(1.0f, 1.0f, 1.0f), 0.01f));
+    Material* glass  = Material::RegisterMaterial(      "GlassLowN", new Glass(Vector3(1.0f, 1.0f, 1.0f), 1.5f));
 
-    Material* lmat  = Material::RegisterMaterial("Light", new DiffuseLight(Vector3(1, 1, 1), 2.0f));
+    Material* lmat   = Material::RegisterMaterial(          "Light", new DiffuseLight(Vector3(1, 1, 1), 2.0f));
 
     Object* sphere  = Object::CreateSphere(Vector3(0, 0, -1), 0.5f, blue);
     Object* ground  = Object::CreateSphere(Vector3(0, -1000.5, 0), 1000, red);
@@ -64,11 +66,11 @@ int main()
 
     Object* light   = Object::CreateSphere(Vector3(0, 1, 7), 2.0f, lmat);
 
-    BVHNode* tree = BVHNode::NewBVHTree({sphere, ground, sphere2, sphere3/* , light */});
+    BVHNode* tree = BVHNode::NewBVHTree({ground, sphere, sphere2, sphere3/* , light */});
 
     Scene world;
     world.top = tree;
-    world.sky = new ImageTexture("HDR_040_Field.hdr");
+    world.sky = new ImageTexture("HDR_Free_City_Night_Lights_Ref.hdr");
 
     const u32 w = 1280;
     const u32 h = w * 9.0f / 16.0f;

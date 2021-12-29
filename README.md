@@ -10,13 +10,13 @@ Features:
 - [ ] BVH acceleration (polygons [bottom])
 - [ ] SIMD support
 - [ ] Importance sampling
-- [ ] IBL with HDR maps
-- [ ] Add some principled shaders
+- [x] IBL with HDR maps
+- [ ] Disney principled shader
 
 Materials:
 
 - [x] Lambertian
 - [x] Diffuse Light
-- [ ] Metal
-- [ ] Glass
+- [x] Metal
+- [x] Glass
 - [ ] Volumes
