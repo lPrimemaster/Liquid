@@ -1,5 +1,8 @@
 #include "image.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../stb/stb_image.h"
+
 #include <Windows.h>
 
 const int BYTES_PER_PIXEL  =  3;
@@ -9,32 +12,6 @@ const int INFO_HEADER_SIZE = 40;
 void generateBitmapImage(unsigned char* image, int height, int width, const char* imageFileName);
 unsigned char* createBitmapFileHeader(int height, int stride);
 unsigned char* createBitmapInfoHeader(int height, int width);
-
-// NOTE: Not used yet
-internal Image* read_bitmap_image(const char* filename)
-{
-    TCHAR full_path[128];
-    GetModuleFileName(NULL, full_path, 128);
-
-    char path_only[128];
-    _splitpath(full_path, path_only, &path_only[2], NULL, NULL);
-    sprintf(path_only, "%s%s", path_only, filename);
-
-    HBITMAP hBMP =(HBITMAP)LoadImage(NULL, path_only, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE);
-
-    BITMAP bitmap;
-    GetObject(hBMP, sizeof(bitmap), (LPVOID)&bitmap);
-
-    u8 bpp = (u8)(bitmap.bmWidthBytes / bitmap.bmWidth);
-
-    Image* img = new Image(bitmap.bmWidth, bitmap.bmHeight, bpp);
-
-    memcpy(img->data, bitmap.bmBits, bitmap.bmHeight * bitmap.bmWidthBytes);
-    
-    DeleteObject(hBMP);
-
-    return img;
-}
 
 internal void generateBitmapImage (unsigned char* image, int height, int width, const char* imageFileName)
 {
@@ -126,6 +103,22 @@ internal unsigned char* createBitmapInfoHeader(int height, int width)
     infoHeader[14] = (unsigned char)(BYTES_PER_PIXEL*8);
 
     return infoHeader;
+}
+
+Image::Image(const std::string& filename)
+{
+    int x, y, n;
+    stbi_set_flip_vertically_on_load(true);
+    data = stbi_load(filename.c_str(), &x, &y, &n, 0);
+
+    w = (u32)x;
+    h = (u32)y;
+    bpp = (u8)n;
+}
+
+Image::~Image()
+{
+    if(data) stbi_image_free(data);
 }
 
 void Image::saveToBMP(std::string filename) const

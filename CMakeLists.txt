@@ -15,6 +15,8 @@ add_executable(Liquid
     src/glad/glad.c
     src/glad/glad.h
 
+    src/stb/stb_image.h
+
     src/main.cpp
     src/common.h
 

@@ -35,13 +35,22 @@ Vector3 RayCast(const Ray* r, Scene* world, i32 depth)
         return emit;
     }
 
-    return Vector3(0, 0, 0);
+    // Black sky
+    // return Vector3(0, 0, 0);
 
-    Vector3 u_dir = r->direction.normalized();
-    f32 t = 0.5f * (u_dir.y + 1.0f);
+    // Naive texture sky
+    Vector3 N = r->direction.normalized();
+    Vector2 uv = Vector2(
+        (atan2f(-N.z, N.x) + PI) / (2 * PI), 
+        acosf(-N.y) / PI
+    );
+    return world->sky->sample(world->sky, uv, N);
 
-    static const Vector3 white  (1.0f, 1.0f, 1.0f);
-    static const Vector3 blueish(0.5f, 0.7f, 1.0f);
 
-    return white * (1.0f - t) + blueish * t;
+    // Blue gradient sky
+    // Vector3 u_dir = r->direction.normalized();
+    // f32 t = 0.5f * (u_dir.y + 1.0f);
+    // static const Vector3 white  (1.0f, 1.0f, 1.0f);
+    // static const Vector3 blueish(0.5f, 0.7f, 1.0f);
+    // return white * (1.0f - t) + blueish * t;
 }

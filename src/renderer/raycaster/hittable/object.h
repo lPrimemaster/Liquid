@@ -16,4 +16,5 @@ struct Object
 
     static Object* CreateSphere(Vector3 center, f32 radius, Material* material);
     static void Delete(Object* obj);
+    static void DeleteAll();
 };

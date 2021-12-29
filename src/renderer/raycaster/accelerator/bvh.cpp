@@ -1,5 +1,7 @@
 #include "bvh.h"
 #include "../../../math/random.h"
+#include "../hittable/object.h"
+#include "../hittable/model.h"
 #include <algorithm>
 
 bool BVHNode::traverse(const Ray* r, f32 tmin, f32 tmax, HitRecord* rec)
@@ -49,7 +51,7 @@ internal BVHNode* NewBVHNodeIter(const std::vector<Object*>& objects, i32 start,
     if(count == 1)
     {
         parent->nleft = parent->nright = nullptr;
-        parent->left = parent->right = objects[0];
+        parent->left = parent->right = objects[start];
     }
     else if(count == 2)
     {
@@ -75,7 +77,7 @@ internal BVHNode* NewBVHNodeIter(const std::vector<Object*>& objects, i32 start,
         std::vector<Object*> sorted = objects;
 
         // TODO: Use some optimized sort later on
-        std::sort(sorted.begin(), sorted.end(), RandomBoxCompare);
+        std::sort(sorted.begin() + start, sorted.begin() + stop, RandomBoxCompare);
 
         i32 mid = start + count / 2;
         parent->nleft  = NewBVHNodeIter(sorted, start, mid);
@@ -108,4 +110,21 @@ void BVHNode::FreeBVHTree(BVHNode* parent)
         FreeBVHTree(parent->nright);
 
     delete parent;
+}
+
+void BVHNode::PrintBVHTree(BVHNode* parent)
+{
+    std::cout << "Node " << std::hex << parent << " --> Leaf? " << (parent->nleft ? "No" : "Yes") << "\n";
+
+    if(!parent->nleft)
+    {
+        std::cout << "Child left : " << std::hex << parent->left << "\n";
+        std::cout << "Child right: " << std::hex << parent->right << "\n";
+    }
+    else
+    {
+        PrintBVHTree(parent->nleft);
+        if(parent->nleft != parent->nright)
+            PrintBVHTree(parent->nright);
+    }
 }

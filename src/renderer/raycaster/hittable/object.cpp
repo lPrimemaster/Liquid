@@ -3,6 +3,9 @@
 #include "model.h"
 #include "../../../math/matrix.h"
 #include "../../../math/aabb.h"
+#include <vector>
+
+internal std::vector<Object*> internal_refs;
 
 void Object::Delete(Object* obj)
 {
@@ -11,6 +14,15 @@ void Object::Delete(Object* obj)
         delete obj->model;
         delete obj;
     }
+}
+
+void Object::DeleteAll()
+{
+    for(auto o : internal_refs)
+    {
+        Object::Delete(o);
+    }
+    internal_refs.clear();
 }
 
 internal bool HitSphere(const Object* self, const Ray* r, f32 tmin, f32 tmax, HitRecord* rec)
@@ -74,6 +86,7 @@ Object* Object::CreateSphere(Vector3 center, f32 radius, Material* material)
     o->transform.scaleValue.x = radius; // Use scaleValue.x for the radius
     o->hit = HitSphere;
     o->getAABB = AABBSphere;
+    internal_refs.push_back(o);
     return o;
 }
 

@@ -3,7 +3,13 @@
 
 struct Vector3;
 
+inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs);
+inline Vector3 operator-(const Vector3& lhs, const Vector3& rhs);
+inline Vector3 operator*(const Vector3& lhs, const Vector3& rhs);
+inline Vector3 operator*(const Vector3& lhs, const f32& rhs);
+inline Vector3 operator*(const f32& lhs, const Vector3& rhs);
 inline Vector3 operator/(const Vector3& lhs, const f32& rhs);
+inline Vector3 operator-(const Vector3& v);
 
 struct Vector3
 {
@@ -32,6 +38,19 @@ struct Vector3
             u.data[0] * v.data[1] - u.data[1] * v.data[0]
         );
     }
+
+    static inline Vector3 Reflect(const Vector3& v, const Vector3& n)
+    {
+        return v - (n * (2 * Dot(v, n)));
+    }
+
+    static inline Vector3 Refract(const Vector3& unit_v, const Vector3& n, f32 refract_material_ratio, f32 cos_theta)
+    {
+        Vector3 ro_orto = (unit_v + (n * cos_theta)) * refract_material_ratio;
+        Vector3 ro_para = n * -sqrtf(fabsf(1.0f - Dot(ro_orto, ro_orto)));
+        return ro_orto + ro_para;
+    }
+
 
     inline f32 length() const
     {
