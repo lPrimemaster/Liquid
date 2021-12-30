@@ -49,6 +49,7 @@ internal void calculateChunk(JobContext* ctx, std::mutex* img_mtx)
 int main()
 {
     Geometry::RegisterGeometry("Sphere", new Sphere());
+    Geometry::RegisterGeometry("Qatar1", TriangleMesh::CreateMeshFromFile("qatar1_001.obj"));
 
     Material* blue   = Material::RegisterMaterial(     "ClearGlass", new Glass(Vector3(1.0f, 1.0f, 1.0f), 1.5f));
     Material* red    = Material::RegisterMaterial("BlaWhiteCheckLa", new Lambertian(Vector3(0, 0, 0), Vector3(1.0f, 1.0f, 1.0f)));
@@ -61,12 +62,13 @@ int main()
 
     Object* sphere  = Object::CreateSphere(Vector3(0, 0, -1), 0.5f, blue);
     Object* ground  = Object::CreateSphere(Vector3(0, -1000.5, 0), 1000, red);
-    Object* sphere2 = Object::CreateSphere(Vector3(1.1f, 0, -1), 0.5f, green);
-    Object* sphere3 = Object::CreateSphere(Vector3(-1.1f, 0, -1), 0.5f, metal);
+    Object* sphere2 = Object::CreateSphere(Vector3(2.1f, 0, -1), 0.5f, green);
+    Object* sphere3 = Object::CreateSphere(Vector3(-2.1f, 0, -1), 0.5f, metal);
+    Object* qatar   = Object::CreateMesh("Qatar1", metal);
 
     Object* light   = Object::CreateSphere(Vector3(0, 1, 7), 2.0f, lmat);
 
-    BVHNode* tree = BVHNode::NewBVHTree({ground, sphere, sphere2, sphere3/* , light */});
+    BVHNode* tree = BVHNode::NewBVHTree({/* ground, sphere, sphere2, sphere3,  */qatar});
 
     Scene world;
     world.top = tree;

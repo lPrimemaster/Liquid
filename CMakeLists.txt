@@ -20,6 +20,8 @@ add_executable(Liquid
     src/main.cpp
     src/common.h
 
+    src/utils/fileloader.h
+
     src/image/image.h
     src/image/image.cpp
 

@@ -15,6 +15,8 @@ struct Object
     Transform transform;
 
     static Object* CreateSphere(Vector3 center, f32 radius, Material* material);
+    static Object* CreateMesh(const std::string& file, Material* material);
+
     static void Delete(Object* obj);
     static void DeleteAll();
 };

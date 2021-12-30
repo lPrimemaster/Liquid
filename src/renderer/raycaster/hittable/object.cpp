@@ -3,6 +3,7 @@
 #include "model.h"
 #include "../../../math/matrix.h"
 #include "../../../math/aabb.h"
+#include "../accelerator/bvh.h"
 #include <vector>
 
 internal std::vector<Object*> internal_refs;
@@ -90,3 +91,38 @@ Object* Object::CreateSphere(Vector3 center, f32 radius, Material* material)
     return o;
 }
 
+internal bool HitMesh(const Object* self, const Ray* r, f32 tmin, f32 tmax, HitRecord* rec)
+{
+    TriangleMesh* mesh = (TriangleMesh*)self->model->mesh;
+    // rec->m = self->model->material;
+    // return true;
+
+    return mesh->bvh->traverse(r, tmin, tmax, rec);
+}
+
+#define CHECK_ASSIGN_S(lhs, rhs) if(lhs < rhs) rhs = lhs
+#define CHECK_ASSIGN_G(lhs, rhs) if(lhs > rhs) rhs = lhs
+
+internal AABB AABBMesh(const Object* self)
+{
+    TriangleMesh* mesh = (TriangleMesh*)self->model->mesh;
+    return mesh->bvh->box;
+}
+
+#undef CHECK_ASSIGN_S
+#undef CHECK_ASSIGN_G
+
+Object* Object::CreateMesh(const std::string& geometryName, Material* material)
+{
+    Object* o = new Object();
+    o->model = new Model(); // NOTE: This a pointer for later instancing maybe
+    o->model->material = material;
+    o->model->mesh = Geometry::GetGeometry(geometryName);
+    // o->transform.tmatrix = Matrix4::Translation(center) * Matrix4::Scale(radius, radius, radius);
+    // o->transform.position = center;
+    o->transform.scaleValue = Vector3(1, 1, 1);
+    o->hit = HitMesh;
+    o->getAABB = AABBMesh;
+    internal_refs.push_back(o);
+    return o;
+}
