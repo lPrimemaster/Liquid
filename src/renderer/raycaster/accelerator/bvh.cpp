@@ -172,6 +172,18 @@ internal AABB GetTriangleAABB(TriangleMesh* mesh, Triangle* t)
 
     r.max = Vector3(maxX, maxY, maxZ);
     r.min = Vector3(minX, minY, minZ);
+
+    auto v1 = mesh->vertices[t->indicesVertex[0]];
+    auto v2 = mesh->vertices[t->indicesVertex[1]];
+    auto v3 = mesh->vertices[t->indicesVertex[2]];
+
+    // std::cout << "Triangle\n(" << v1.x << " " << v1.y << " " << v1.z << ")\n"
+    //           << "(" << v2.x << " " << v2.y << " " << v2.z << ")\n"
+    //           << "(" << v3.x << " " << v3.y << " " << v3.z << ")\n";
+
+    // std::cout << "Box\n(" << r.min.x << " " << r.min.y << " " << r.min.z << ")\n"
+    //           << "(" << r.max.x << " " << r.max.y << " " << r.max.z << ")\n\n";
+
     return r;
 }
 

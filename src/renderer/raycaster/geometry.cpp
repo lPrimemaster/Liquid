@@ -3,6 +3,7 @@
 #include "accelerator/bvh.h"
 
 #include <unordered_map>
+#include <chrono>
 
 internal std::unordered_map<std::string, Geometry*> GeometryRegistry;
 
@@ -24,20 +25,14 @@ bool Triangle::hit(const TriangleMesh* mesh, const Ray* r, f32 tmin, f32 tmax, H
 	// IEEE-754 mandates that they compare to false if the left hand side is a NaN.
 	if (u >= 0.0f && v >= 0.0f && u + v <= 1.0f) {
 		float t = Vector3::Dot(n, c) * invDet;
-		if (t >= 0.0f && t < rec->t) {
+		if (t >= 0.0f && t < tmax) {
 			rec->uv = Vector2(u, v);
 			rec->t = t;
-			// if (poly->hasNormals) {
-			// 	struct vector upcomp = vecScale(g_normals[poly->normalIndex[1]], u);
-			// 	struct vector vpcomp = vecScale(g_normals[poly->normalIndex[2]], v);
-			// 	struct vector wpcomp = vecScale(g_normals[poly->normalIndex[0]], w);
-				
-			// 	isect->surfaceNormal = vecAdd(vecAdd(upcomp, vpcomp), wpcomp);
-			// } else {
-            rec->n = n;
-			// }
+            Vector3 nup = mesh->normals[indicesNormal[1]] * u;
+            Vector3 nvp = mesh->normals[indicesNormal[2]] * v;
+            Vector3 nwp = mesh->normals[indicesNormal[0]] * w;
+            rec->n = nup + nvp + nwp;
 			rec->p = r->at(t);
-            printf("hit tris\n");
 			return true;
 		}
 	}
@@ -107,8 +102,31 @@ internal TriangleMesh* ParseWavefrontFile(const std::string& filename)
 
 TriangleMesh* TriangleMesh::CreateMeshFromFile(const std::string& filename)
 {
+    auto t0 = std::chrono::steady_clock::now();
+    std::cout << "Parsing wavefront file: " << filename << " ";
     TriangleMesh* m = ParseWavefrontFile(filename.c_str());
+    std::cout << "Done [" << m->vertexCount / 1000 << "k vertices in " 
+              << std::chrono::duration_cast<std::chrono::seconds>(
+                  std::chrono::steady_clock::now() - t0
+                 ).count() << "s].\n";
+
+    t0 = std::chrono::steady_clock::now();
+    std::cout << "Building BVH... ";
     m->bvh = BVHNodeTri::NewBVHTriTree(m);
+
+    BVHNodeTri* node = m->bvh;
+    u64 estimatedDepth = 0;
+
+    while(node != nullptr)
+    {
+        node = node->nleft;
+        estimatedDepth++;
+    }
+
+    std::cout << "Done [" << estimatedDepth << " estimated layers in " 
+              << std::chrono::duration_cast<std::chrono::seconds>(
+                  std::chrono::steady_clock::now() - t0
+                 ).count() << "s].\n";
     return m;
 }
 

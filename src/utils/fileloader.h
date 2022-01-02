@@ -61,17 +61,15 @@ namespace FileLoader
         std::getline(ss, token, ' '); // TODO: Pass a substring to this function instead
         std::getline(ss, token, '/'); vI[0] = std::stoull(token) - 1;
         std::getline(ss, token, '/'); tI[0] = std::stoull(token) - 1;
-        std::getline(ss, token, '/'); nI[0] = std::stoull(token) - 1;
+        std::getline(ss, token, ' '); nI[0] = std::stoull(token) - 1;
 
-        std::getline(ss, token, ' ');
         std::getline(ss, token, '/'); vI[1] = std::stoull(token) - 1;
         std::getline(ss, token, '/'); tI[1] = std::stoull(token) - 1;
-        std::getline(ss, token, '/'); nI[1] = std::stoull(token) - 1;
-
-        std::getline(ss, token, ' ');
+        std::getline(ss, token, ' '); nI[1] = std::stoull(token) - 1;
+        
         std::getline(ss, token, '/'); vI[2] = std::stoull(token) - 1;
         std::getline(ss, token, '/'); tI[2] = std::stoull(token) - 1;
-        std::getline(ss, token, '/'); nI[2] = std::stoull(token) - 1;
+        std::getline(ss, token, ' '); nI[2] = std::stoull(token) - 1;
     }
 }
 

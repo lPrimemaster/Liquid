@@ -1,6 +1,6 @@
 #include "aabb.h"
 
-internal FORCE_INLINE bool boxAxis(const AABB* aabb, const Ray* r, f32& tmin, f32& tmax, i32 axis)
+internal POSSIBLE_INLINE bool boxAxis(const AABB* aabb, const Ray* r, f32& tmin, f32& tmax, i32 axis)
 {
     f32 tx_min = (aabb->min.data[axis] - r->origin.data[axis]) / r->direction.data[axis];
     f32 tx_max = (aabb->max.data[axis] - r->origin.data[axis]) / r->direction.data[axis];
