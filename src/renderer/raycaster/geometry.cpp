@@ -94,7 +94,7 @@ internal TriangleMesh* ParseWavefrontFile(const std::string& filename)
 		}
         else // TODO: Don't Ignore usemtl and mtllib arguments
         {
-            std::cout << "Ignoring line: \"" << line << "\"\n";
+            // std::cout << "Ignoring line: \"" << line << "\"\n";
 		}
 	}
     return mesh;
@@ -143,7 +143,9 @@ void Geometry::RegisterGeometry(std::string name, Geometry* geometry)
 {
     if(GeometryRegistry.find(name) != GeometryRegistry.end())
     {
-        std::cerr << "warn: Global geometry registry already contains name " << name << " - overwriting..." << std::endl;
+        std::cerr << "warn: Global geometry registry already contains name " << name << " - ignoring..." << std::endl;
+        delete geometry;
+        return;
     }
     GeometryRegistry.emplace(name, geometry);
 }

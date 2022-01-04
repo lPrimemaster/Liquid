@@ -102,6 +102,7 @@ internal bool HitMesh(const Object* self, const Ray* r, f32 tmin, f32 tmax, HitR
         rec->m = self->model->material;
         return true;
     }
+    return false;
 }
 
 #define CHECK_ASSIGN_S(lhs, rhs) if(lhs < rhs) rhs = lhs

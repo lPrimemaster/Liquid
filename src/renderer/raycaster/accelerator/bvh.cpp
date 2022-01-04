@@ -292,6 +292,7 @@ void BVHNode::FreeBVHTree(BVHNode* parent)
         FreeBVHTree(parent->nright);
 
     delete parent;
+    parent = nullptr;
 }
 
 void BVHNode::PrintBVHTree(BVHNode* parent)

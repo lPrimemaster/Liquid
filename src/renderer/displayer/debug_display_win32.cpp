@@ -149,7 +149,7 @@ int run_window(Image* img, std::mutex* mtx)
 			MSG message;
 			running = 1;
             u8 time = 0;
-			char performance_line_buffer[512];
+			// char performance_line_buffer[512];
 			u64 max_total_us = 0;
 			while (running)
 			{

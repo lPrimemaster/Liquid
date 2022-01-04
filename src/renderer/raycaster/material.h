@@ -28,6 +28,7 @@ struct CheckerTexture : Texture
 struct ImageTexture : Texture
 {
     ImageTexture(const std::string& bitmap);
+    ImageTexture(const std::string& bitmap, f32 factor);
     ~ImageTexture() { if(img != nullptr) delete img; }
     Image* img;
 };

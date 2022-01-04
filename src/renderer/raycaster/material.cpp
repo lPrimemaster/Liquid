@@ -58,6 +58,12 @@ ImageTexture::ImageTexture(const std::string& bitmap)
     sample = SampleImageTexture;
 }
 
+ImageTexture::ImageTexture(const std::string& bitmap, f32 factor)
+{
+    img = new Image(bitmap, factor);
+    sample = SampleImageTexture;
+}
+
 internal bool ScatterLambertian(const Material* self, const Ray* r, Ray* scattered, HitRecord* rec, Vector3* outColor)
 {
     scattered->origin = rec->p;
