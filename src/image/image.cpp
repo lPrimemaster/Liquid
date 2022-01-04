@@ -116,6 +116,17 @@ Image::Image(const std::string& filename)
     bpp = (u8)n;
 }
 
+Image::Image(const std::string& filename, f32 factor) : Image(filename)
+{
+    for(u32 i = 0; i < w * h * IMAGE_FORMAT_BPP; i += IMAGE_FORMAT_BPP)
+    {
+        *(data + i    ) = (u8)(*(data + i    ) * factor);
+        *(data + i + 1) = (u8)(*(data + i + 1) * factor);
+        *(data + i + 2) = (u8)(*(data + i + 2) * factor);
+        *(data + i + 3) = (u8)(*(data + i + 3) * factor);
+    }
+}
+
 Image::~Image()
 {
     if(data) stbi_image_free(data);

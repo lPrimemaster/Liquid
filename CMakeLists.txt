@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(Liquid CXX)
+project(Liquid LANGUAGES CXX)
 
 list(APPEND CMAKE_PREFIX_PATH "C:/Program Files/GLFW/lib/cmake/glfw3")
 
@@ -10,10 +10,27 @@ find_package(glfw3 3.3 REQUIRED)
 
 include_directories(Liquid ${GLFW3_INCLUDE_DIRS})
 
+set_source_files_properties(src/glad/glad.c PROPERTIES LANGUAGE CXX)
+
+set(IMGUI_SRC_DIR src/imgui)
+
 add_executable(Liquid
+    ${IMGUI_SRC_DIR}/imgui.cpp
+    ${IMGUI_SRC_DIR}/imgui_demo.cpp
+    ${IMGUI_SRC_DIR}/imgui_draw.cpp
+    ${IMGUI_SRC_DIR}/imgui_tables.cpp
+    ${IMGUI_SRC_DIR}/imgui_widgets.cpp
+    ${IMGUI_SRC_DIR}/imgui_widgets.cpp
+    ${IMGUI_SRC_DIR}/imgui_impl_glfw.cpp
+    ${IMGUI_SRC_DIR}/imgui_impl_opengl3.cpp
+    
+    ${IMGUI_SRC_DIR}/imgui_impl_glfw.h
+    ${IMGUI_SRC_DIR}/imgui_impl_opengl3.h
+    ${IMGUI_SRC_DIR}/imgui.h
+
     src/glad/khrplatform.h
-    src/glad/glad.c
     src/glad/glad.h
+    src/glad/glad.c
 
     src/stb/stb_image.h
 
@@ -46,6 +63,11 @@ add_executable(Liquid
     src/renderer/displayer/debug_display_win32.h
     src/renderer/displayer/debug_display_win32.cpp
 
+    src/renderer/displayer/display.h
+    src/renderer/displayer/display.cpp
+    src/renderer/displayer/overlay.h
+    src/renderer/displayer/overlay.cpp
+
     src/renderer/scene.h
 
     src/renderer/raycaster/geometry.h
@@ -64,14 +86,17 @@ add_executable(Liquid
     src/renderer/raycaster/hittable/model.h
     src/renderer/raycaster/hittable/object.h
     src/renderer/raycaster/hittable/object.cpp
+
+    src/renderer/samples/samples.h
+    src/renderer/samples/samples.cpp
 )
 
 target_link_libraries(Liquid glfw)
 
 # add_custom_command(TARGET Liquid POST_BUILD
 #                    COMMAND ${CMAKE_COMMAND} -E copy_directory 
-#                    ${CMAKE_SOURCE_DIR}/shaders/ $<TARGET_FILE_DIR:Raytracer>/shaders)
+#                    ${CMAKE_SOURCE_DIR}/renderer/displayer/shaders $<TARGET_FILE_DIR:Liquid>)
 
 # add_custom_command(TARGET Liquid POST_BUILD
 #                    COMMAND ${CMAKE_COMMAND} -E copy_directory 
-#                    ${CMAKE_SOURCE_DIR}/shaders/ $<TARGET_FILE_DIR:Raytracer>/../shaders)
+#                    ${CMAKE_SOURCE_DIR}/renderer/displayer/shaders/ $<TARGET_FILE_DIR:Liquid>)

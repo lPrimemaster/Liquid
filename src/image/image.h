@@ -14,6 +14,7 @@ struct Image
 
     Image(u32 w, u32 h, u8 bpp) : w(w), h(h), bpp(bpp) { data = new u8[w * h * bpp]; }
     Image(const std::string& filename);
+    Image(const std::string& filename, f32 factor);
     ~Image();
 
     POSSIBLE_INLINE void setPixel(u32 x, u32 y, const Vector3& value)
