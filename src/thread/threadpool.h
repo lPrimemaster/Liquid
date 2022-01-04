@@ -14,16 +14,19 @@ struct JobContext
     u32 numJobs;
     i32 istart, ispan;
     i32 jstart, jspan;
+    i32 spp;
     Camera* cam;
     Image* img;
     Scene* world;
+    f32* globalDonePct;
+    std::mutex* globalDoneMtx;
 };
 
 class ThreadPool
 {
 public:
-    ThreadPool(u32 chunkSizeX, u32 chunkSizeY, Scene* world, Image* img, Camera* cam, void (*jobFunc)(JobContext* ctx, std::mutex* img_mtx));
-
+    ThreadPool(u32 chunkSizeX, u32 chunkSizeY, Scene* world, Image* img, i32 spp, void (*jobFunc)(JobContext* ctx, std::mutex* img_mtx), std::atomic<bool>* finish, f32* gDonePct, std::mutex* gDoneMtx);
+    ~ThreadPool();
 
     void run();
     void fence() const;
@@ -44,5 +47,7 @@ private:
     std::mutex mtx;
     std::mutex image_mtx;
     std::atomic<bool> running = true;
+    std::atomic<bool>* done;
+    std::atomic<bool>* threadsDone;
     void (*jobFunc)(JobContext* ctx, std::mutex* img_mtx);
 };
