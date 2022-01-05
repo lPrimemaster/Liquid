@@ -4,8 +4,7 @@
 #include "../../imgui/imgui_impl_glfw.h"
 #include "../../imgui/imgui_impl_opengl3.h"
 
-#include "../../glad/glad.h"
-#include <GLFW/glfw3.h>
+#include "raster/raster.h"
 
 #include <iostream>
 
@@ -62,7 +61,7 @@ internal GLuint CreateShader(i32 shader_type, const char* source)
     return shader;
 }
 
-GLuint CreateRTProgram()
+internal GLuint CreateRTProgram()
 {
     char source[4096];
     memset(source, 0, 4096);
@@ -202,6 +201,8 @@ void RasterDisplay::RunGLFWWindow()
     OpenGLInternalData data = InitInternal(rs.rtImageW.load(), rs.rtImageH.load());
     u32 last_h = rs.rtImageH.load();
 
+    Raster::SetupRaster();
+
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
@@ -215,10 +216,10 @@ void RasterDisplay::RunGLFWWindow()
 
         float ratio;
         int width, height;
- 
+
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
- 
+
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -238,8 +239,10 @@ void RasterDisplay::RunGLFWWindow()
         glBindVertexArray(data.rtVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+        // Raster::RenderRaster(window, &rs.world);
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
- 
+
         glfwSwapBuffers(window);
     }
 
@@ -257,6 +260,8 @@ void RasterDisplay::RunGLFWWindow()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    Raster::CleanRaster();
  
     glfwDestroyWindow(window);
  
