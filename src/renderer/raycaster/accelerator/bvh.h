@@ -18,6 +18,8 @@ struct BVHNode
     static void FreeBVHTree(BVHNode* parent);
     static void PrintBVHTree(BVHNode* parent);
 
+    std::vector<Object*> GetAllObjectsList();
+
     bool traverse(const Ray* r, f32 tmin, f32 tmax, HitRecord* rec);
 };
 

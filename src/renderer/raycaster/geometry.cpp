@@ -150,6 +150,17 @@ void Geometry::RegisterGeometry(std::string name, Geometry* geometry)
     GeometryRegistry.emplace(name, geometry);
 }
 
+std::vector<Geometry*> Geometry::GetAllGeometry()
+{
+    // std::vector<Geometry*> r;
+    // r.reserve(GeometryRegistry.size());
+    // for(auto g : GeometryRegistry)
+    // {
+    //     r.push_back();
+    // }
+    return std::vector<Geometry*>();
+}
+
 Geometry* Geometry::GetGeometry(std::string name)
 {
     if(GeometryRegistry.find(name) != GeometryRegistry.end())

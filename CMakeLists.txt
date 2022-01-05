@@ -68,6 +68,9 @@ add_executable(Liquid
     src/renderer/displayer/overlay.h
     src/renderer/displayer/overlay.cpp
 
+    src/renderer/displayer/raster/raster.h
+    src/renderer/displayer/raster/raster.cpp
+
     src/renderer/scene.h
 
     src/renderer/raycaster/geometry.h

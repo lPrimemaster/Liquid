@@ -5,6 +5,7 @@
 #include "../hit_record.h"
 
 struct Model;
+struct RasterData;
 
 struct Object
 {
@@ -13,6 +14,7 @@ struct Object
     AABB (*getAABB)(const Object* self);
     Model* model;
     Transform transform;
+    RasterData* rasterData = nullptr;
 
     static Object* CreateSphere(Vector3 center, f32 radius, Material* material);
     static Object* CreateMesh(const std::string& file, Material* material);

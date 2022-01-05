@@ -71,6 +71,50 @@ struct Matrix4
         return S;
     }
 
+    inline static Matrix4 Projection(f32 fov, f32 aspect, f32 near, f32 far)
+    {
+        Matrix4 r;
+
+        f32 D2R = PI / 180.0f;
+        f32 range = tanf((fov/ 2) * D2R) * near;	
+		f32 left = -range * aspect;
+		f32 right = range * aspect;
+		f32 bottom = -range;
+		f32 top = range;
+        
+		r.data[0][0] = (2 * near) / (right - left);
+		r.data[1][1] = (2 * near) / (top - bottom);
+		r.data[2][2] = - (far + near) / (far - near);
+		r.data[2][3] = - 1;
+		r.data[3][2] = - (2 * far * near) / (far - near);
+
+        return r;
+    }
+
+    inline static Matrix4 LookAt(const Vector3& from, const Vector3& to, const Vector3& up)
+    {
+        Matrix4 r;
+
+        Vector3 f = (to - from).normalized();
+		Vector3 u = up.normalized();
+		Vector3 s = Vector3::Cross(f, u).normalized();
+		u = Vector3::Cross(s, f);
+
+		r.data[0][0] = s.x;
+		r.data[1][0] = s.y;
+		r.data[2][0] = s.z;
+		r.data[0][1] = u.x;
+		r.data[1][1] = u.y;
+		r.data[2][1] = u.z;
+		r.data[0][2] =-f.x;
+		r.data[1][2] =-f.y;
+		r.data[2][2] =-f.z;
+		r.data[3][0] =-Vector3::Dot(s, from);
+		r.data[3][1] =-Vector3::Dot(u, from);
+		r.data[3][2] = Vector3::Dot(f, from);
+		return r;
+    }
+
     f32 data[4][4] = { 0 };
 };
 

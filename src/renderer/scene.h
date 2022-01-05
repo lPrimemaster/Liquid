@@ -12,6 +12,7 @@ struct Scene
     Texture* sky;
     Camera* renderCamera;
     std::string name = "Unnamed";
+    std::vector<Object*> objList;
     
     static void FreeScene(Scene* s)
     {

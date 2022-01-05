@@ -5,10 +5,12 @@
 #include "../../math/ray.h"
 #include "hit_record.h"
 #include "../../math/aabb.h"
+#include <vector>
 
 struct Geometry
 {
     static void RegisterGeometry(std::string name, Geometry* geometry);
+    static std::vector<Geometry*> GetAllGeometry();
     static Geometry* GetGeometry(std::string name);
     static void UnloadAll();
 };

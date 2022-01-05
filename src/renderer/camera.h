@@ -2,6 +2,7 @@
 #include "../math/vector.h"
 #include "../math/ray.h"
 #include "../math/random.h"
+#include "../math/matrix.h"
 
 struct Camera
 {
@@ -23,6 +24,9 @@ struct Camera
         lower_left = origin - horizontal / 2 - vertical / 2 - (w * focus);
 
         lr = aperture / 2.0f;
+
+        staticView = Matrix4::LookAt(pos, lookAt, up);
+        projection = Matrix4::Projection(fov, aspect, 0.1f, 10000.0f);
     }
 
     FORCE_INLINE Ray shootRay(f32 u, f32 v)
@@ -36,6 +40,8 @@ struct Camera
         return r;
     }
 
+    Matrix4 staticView;
+    Matrix4 projection;
     Vector3 origin;
     Vector3 lower_left;
     Vector3 horizontal, vertical;

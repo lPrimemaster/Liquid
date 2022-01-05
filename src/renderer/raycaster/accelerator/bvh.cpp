@@ -4,6 +4,12 @@
 #include "../hittable/model.h"
 #include <algorithm>
 
+std::vector<Object*> BVHNode::GetAllObjectsList()
+{
+    // TODO: Usefull for bvh caching maybe (???)
+    return std::vector<Object*>();
+}
+
 bool BVHNode::traverse(const Ray* r, f32 tmin, f32 tmax, HitRecord* rec)
 {
     // The ray did not hit anything
