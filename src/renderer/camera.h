@@ -26,7 +26,7 @@ struct Camera
         lr = aperture / 2.0f;
 
         staticView = Matrix4::LookAt(pos, lookAt, up);
-        projection = Matrix4::Projection(fov, aspect, 0.1f, 10000.0f);
+        projection = Matrix4::Projection(fov, aspect, 0.1f, 1000.0f);
     }
 
     FORCE_INLINE Ray shootRay(f32 u, f32 v)

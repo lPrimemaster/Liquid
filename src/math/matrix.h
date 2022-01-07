@@ -10,12 +10,12 @@ inline Matrix4 operator*(const f32& lhs, const Matrix4& rhs);
 
 struct Matrix4
 {
-    Matrix4()
+    Matrix4(const f32& v = 1)
     {
-        this->data[0][0] = 1;
-        this->data[1][1] = 1;
-        this->data[2][2] = 1;
-        this->data[3][3] = 1;
+        this->data[0][0] = v;
+        this->data[1][1] = v;
+        this->data[2][2] = v;
+        this->data[3][3] = v;
     }
 
     inline static Matrix4 Identity()
@@ -37,27 +37,38 @@ struct Matrix4
         return m;
     }
 
-    inline static Matrix4 Rotation(f32 ex, f32 ey, f32 ez)
+    inline static Matrix4 Rotation(f32 angle, const Vector3& v)
     {
-        Matrix4 Rx = Identity();
-        Matrix4 Ry = Identity();
-        Matrix4 Rz = Identity();
+        f32 a = angle;
+		f32 c = cos(a);
+		f32 s = sin(a);
 
-        Rx.data[1][1] = Rx.data[2][2] = cosf(ex);
-        Rx.data[2][1] = -sinf(ex);
-        Rx.data[1][2] = -Rx.data[2][1];
+		Vector3 axis = v.normalized();
+		Vector3 temp = (1 - c) * axis;
 
-        Ry.data[0][0] = Ry.data[2][2] = cosf(ey);
-        Ry.data[0][3] = -sinf(ey);
-        Ry.data[3][0] = -Ry.data[0][3];
+        Matrix4 m(1);
+		Matrix4 Rotate;
+		Rotate.data[0][0] = c + temp.data[0] * axis.data[0];
+		Rotate.data[0][1] = temp.data[0] * axis.data[1] + s * axis.data[2];
+		Rotate.data[0][2] = temp.data[0] * axis.data[2] - s * axis.data[1];
 
-        Rz.data[0][0] = Rz.data[1][1] = cosf(ez);
-        Rz.data[0][1] = -sinf(ez);
-        Rz.data[1][0] = -Rz.data[0][1];
+		Rotate.data[1][0] = temp.data[1] * axis.data[0] - s * axis.data[2];
+		Rotate.data[1][1] = c + temp.data[1] * axis.data[1];
+		Rotate.data[1][2] = temp.data[1] * axis.data[2] + s * axis.data[0];
 
-        Matrix4 R = Rx * Ry * Rz;
+		Rotate.data[2][0] = temp.data[2] * axis.data[0] + s * axis.data[1];
+		Rotate.data[2][1] = temp.data[2] * axis.data[1] - s * axis.data[0];
+		Rotate.data[2][2] = c + temp.data[2] * axis.data[2];
 
-        return R;
+		Matrix4 Result;
+        for(i32 i = 0; i < 4; i++)
+        {
+            Result.data[0][i] = m.data[0][i] * Rotate.data[0][0] + m.data[1][i] * Rotate.data[0][1] + m.data[2][i] * Rotate.data[0][2];
+            Result.data[1][i] = m.data[0][i] * Rotate.data[1][0] + m.data[1][i] * Rotate.data[1][1] + m.data[2][i] * Rotate.data[1][2];
+            Result.data[2][i] = m.data[0][i] * Rotate.data[2][0] + m.data[1][i] * Rotate.data[2][1] + m.data[2][i] * Rotate.data[2][2];
+            Result.data[3][i] = m.data[3][i];
+        }
+		return Result;
     }
 
     inline static Matrix4 Scale(f32 sx, f32 sy, f32 sz)
@@ -73,46 +84,40 @@ struct Matrix4
 
     inline static Matrix4 Projection(f32 fov, f32 aspect, f32 near, f32 far)
     {
-        Matrix4 r;
+        Matrix4 Result(0);
 
         f32 D2R = PI / 180.0f;
-        f32 range = tanf((fov/ 2) * D2R) * near;	
-		f32 left = -range * aspect;
-		f32 right = range * aspect;
-		f32 bottom = -range;
-		f32 top = range;
+        f32 tHfov = tanf((fov / 2) * D2R);
         
-		r.data[0][0] = (2 * near) / (right - left);
-		r.data[1][1] = (2 * near) / (top - bottom);
-		r.data[2][2] = - (far + near) / (far - near);
-		r.data[2][3] = - 1;
-		r.data[3][2] = - (2 * far * near) / (far - near);
+		Result.data[0][0] = 1 / (aspect * tHfov);
+		Result.data[1][1] = 1 / (tHfov);
+		Result.data[2][2] = -(far + near) / (far - near);
+		Result.data[2][3] = -1;
+		Result.data[3][2] = -(2 * far * near) / (far - near);
 
-        return r;
+        return Result;
     }
 
-    inline static Matrix4 LookAt(const Vector3& from, const Vector3& to, const Vector3& up)
+    inline static Matrix4 LookAt(const Vector3& eye, const Vector3& center, const Vector3& up)
     {
-        Matrix4 r;
+        Vector3 f = (center - eye).normalized();
+		Vector3 s = Vector3::Cross(f, up).normalized();
+		Vector3 u = Vector3::Cross(s, f);
 
-        Vector3 f = (to - from).normalized();
-		Vector3 u = up.normalized();
-		Vector3 s = Vector3::Cross(f, u).normalized();
-		u = Vector3::Cross(s, f);
-
-		r.data[0][0] = s.x;
-		r.data[1][0] = s.y;
-		r.data[2][0] = s.z;
-		r.data[0][1] = u.x;
-		r.data[1][1] = u.y;
-		r.data[2][1] = u.z;
-		r.data[0][2] =-f.x;
-		r.data[1][2] =-f.y;
-		r.data[2][2] =-f.z;
-		r.data[3][0] =-Vector3::Dot(s, from);
-		r.data[3][1] =-Vector3::Dot(u, from);
-		r.data[3][2] = Vector3::Dot(f, from);
-		return r;
+		Matrix4 Result(1);
+		Result.data[0][0] = s.x;
+		Result.data[1][0] = s.y;
+		Result.data[2][0] = s.z;
+		Result.data[0][1] = u.x;
+		Result.data[1][1] = u.y;
+		Result.data[2][1] = u.z;
+		Result.data[0][2] =-f.x;
+		Result.data[1][2] =-f.y;
+		Result.data[2][2] =-f.z;
+		Result.data[3][0] =-Vector3::Dot(s, eye);
+		Result.data[3][1] =-Vector3::Dot(u, eye);
+		Result.data[3][2] = Vector3::Dot(f, eye);
+		return Result;
     }
 
     f32 data[4][4] = { 0 };

@@ -17,7 +17,7 @@ Scene Samples::BasicSphere(std::atomic<i32>* progress)
 
     Material* earthMat = Material::RegisterMaterial("EarthLambertian", new Lambertian("earthmap.bmp"));
     Material* sunMat = Material::RegisterMaterial("SunDiffuse", new DiffuseLight(Vector3(1.0f, 0.83f, 0.25f), 1.0f));
-    
+
     Object* earth  = Object::CreateSphere(Vector3(0, 0, 0), 1, earthMat);
     Object* sun  = Object::CreateSphere(Vector3(200, 1, 0), 100, sunMat);
 
@@ -35,4 +35,27 @@ Scene Samples::BasicSphere(std::atomic<i32>* progress)
     progress->store(100);
 
     return world;
-} 
+}
+
+Scene Samples::SingleSphere(std::atomic<i32>* progress)
+{
+    Geometry::RegisterGeometry("Sphere", new Sphere());
+
+    Material* earthMat = Material::RegisterMaterial("EarthLambertian", new Lambertian("earthmap.bmp"));
+    Object* earth  = Object::CreateSphere(Vector3(0, 0, 0), 1, earthMat);
+
+    progress->store(50);
+
+    BVHNode* tree = BVHNode::NewBVHTree({ earth });
+
+    Scene world;
+    world.name = "SimpleSpaceEarth";
+    world.top = tree;
+    world.objList = { earth };
+    world.sky = new ColorTexture(Vector3(0.1f, 0.1f, 0.1f));
+    world.renderCamera = new Camera(Vector3(15, 15, 15), Vector3(0, 0, 0), Vector3(0, 1, 0), 45.0f, 16.0f / 9.0f, .01f, 250);
+    
+    progress->store(100);
+
+    return world;
+}

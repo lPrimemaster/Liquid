@@ -171,11 +171,12 @@ Glass::Glass(Vector3 color, f32 ior) : ior(ior)
 
 Material* Material::RegisterMaterial(std::string name, Material* material)
 {
-    if(MaterialRegistry.find(name) != MaterialRegistry.end())
+    auto matit = MaterialRegistry.find(name);
+    if(matit != MaterialRegistry.end())
     {
         std::cerr << "warn: Global material registry already contains name " << name << " - aborting..." << std::endl;
         delete material;
-        return nullptr;
+        return (*matit).second;
     }
     MaterialRegistry.emplace(name, material);
     return material;

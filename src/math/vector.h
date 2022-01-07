@@ -1,6 +1,11 @@
 #pragma once
 #include "../common.h"
 
+#ifdef USE_GLM
+#include <glm/glm.hpp>
+typedef Vector3 glm::vec3;
+
+#else
 struct Vector3;
 
 inline Vector3 operator+(const Vector3& lhs, const Vector3& rhs);
@@ -15,6 +20,7 @@ struct Vector3
 {
     Vector3() : x(0), y(0), z(0) {  }
     Vector3(f32 x, f32 y, f32 z) : x(x), y(y), z(z) {  }
+    Vector3(f32 data[3]) : x(data[0]), y(data[1]), z(data[2]) {  }
     
     union
     {
@@ -181,3 +187,4 @@ inline Vector2 operator-(const Vector2& v)
     return Vector2(-v.x, -v.y);
 }
 
+#endif

@@ -173,8 +173,9 @@ void RasterDisplay::RunGLFWWindow()
     if (!glfwInit())
         std::cerr << "err: failed to init glfw.\n";
  
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
     window = glfwCreateWindow(1280, 720, "Liquid", NULL, NULL);
     if (!window)
@@ -193,9 +194,14 @@ void RasterDisplay::RunGLFWWindow()
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     glfwSwapInterval(1);
 
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
+    // glFrontFace(GL_CW);
+    // glDisable(GL_CULL_FACE);
+
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     Overlay::RenderSettings& rs = Overlay::GetRenderSettings();
     OpenGLInternalData data = InitInternal(rs.rtImageW.load(), rs.rtImageH.load());
@@ -221,7 +227,9 @@ void RasterDisplay::RunGLFWWindow()
         ratio = width / (float) height;
 
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+
+        // glClearDepthf(0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         Image* image = Overlay::GetRenderTarget();
         if(image)
@@ -239,7 +247,7 @@ void RasterDisplay::RunGLFWWindow()
         glBindVertexArray(data.rtVao);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        // Raster::RenderRaster(window, &rs.world);
+        Raster::RenderRaster(window, &rs.world, &rs);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

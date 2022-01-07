@@ -94,7 +94,6 @@ internal void LoadingWindow(const std::string& title, std::atomic<i32>* flag, vo
 
     ImGui::SetNextWindowSize(ImVec2(200, 40));
     ImGui::Begin("##loading", nullptr, flags);
-    
 
     const ImU32 col = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
     const ImU32 bg = ImGui::GetColorU32(ImGuiCol_Button);
@@ -136,6 +135,10 @@ internal void DisplayMenuBar()
                 if(ImGui::MenuItem("SimpleSpaceEarth"))
                 {
                     StartAsyncSceneLoad(Samples::BasicSphere);
+                }
+                if(ImGui::MenuItem("SingleEarth"))
+                {
+                    StartAsyncSceneLoad(Samples::SingleSphere);
                 }
                 ImGui::EndMenu();
             }
@@ -334,6 +337,33 @@ internal void DisplaySettings()
             ImGui::PopItemWidth();
         }
         
+        // Raster Enable/Disable
+        {
+            ImGui::PushItemWidth(ITEM_SIZE);
+            i32 currentIdx = RENDER_SETTINGS_LOAD(rasterRender) ? 1 : 0;
+            static std::string opt[2] = { "Off",  "On" };
+            if(ImGui::BeginCombo("Raster Render", opt[currentIdx].c_str()))
+            {
+                for(i32 i = 0; i < 2; i++)
+                {
+                    bool is_selected = (opt[currentIdx] == opt[i]);
+                    if(ImGui::Selectable(opt[i].c_str(), is_selected))
+                    {
+                        currentIdx = i;
+                    }
+                    if (is_selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                bool rasterRender = opt[currentIdx] == "On";
+                RENDER_SETTINGS_STORE(rasterRender);
+
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+        }
+
         ImGui::EndDisabled();
         ImGui::End();
     }

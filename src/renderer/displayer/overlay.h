@@ -25,6 +25,8 @@ namespace Overlay
 
         std::atomic<bool> rtRender = false;
 
+        std::atomic<bool> rasterRender = false;
+
 
         ThreadPool* workingPool = nullptr;
         Scene world;

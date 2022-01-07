@@ -10,9 +10,9 @@ struct Transform
     Vector3 position;
     Vector3 scaleValue;
 
-    inline void rotate(const f32& ex, const f32& ey, const f32& ez)
+    inline void rotate(const f32& angle, const Vector3& v)
     {
-        tmatrix = Matrix4::Rotation(ex, ey, ez) * tmatrix;
+        tmatrix = Matrix4::Rotation(angle, v) * tmatrix;
     }
 
     inline void rotate(const Vector3& axis, const f32& v)

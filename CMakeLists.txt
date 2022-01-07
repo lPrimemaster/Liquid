@@ -8,8 +8,6 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 find_package(glfw3 3.3 REQUIRED)
 
-include_directories(Liquid ${GLFW3_INCLUDE_DIRS})
-
 set_source_files_properties(src/glad/glad.c PROPERTIES LANGUAGE CXX)
 
 set(IMGUI_SRC_DIR src/imgui)
@@ -94,6 +92,7 @@ add_executable(Liquid
     src/renderer/samples/samples.cpp
 )
 
+target_include_directories(Liquid PRIVATE ${GLFW3_INCLUDE_DIRS})
 target_link_libraries(Liquid glfw)
 
 # add_custom_command(TARGET Liquid POST_BUILD
