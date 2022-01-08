@@ -36,6 +36,8 @@ add_executable(Liquid
     src/common.h
 
     src/utils/fileloader.h
+    src/utils/shaderloader.cpp
+    src/utils/shaderloader.h
 
     src/image/image.h
     src/image/image.cpp

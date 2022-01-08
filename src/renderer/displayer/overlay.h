@@ -2,6 +2,8 @@
 #include "../../common.h"
 #include "../scene.h"
 
+struct GLFWwindow;
+
 class ThreadPool;
 
 namespace Overlay
@@ -32,7 +34,7 @@ namespace Overlay
         Scene world;
     };
 
-    void Display();
+    void Display(GLFWwindow* window);
 
     RenderSettings& GetRenderSettings();
     Image* GetRenderTarget();

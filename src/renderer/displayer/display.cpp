@@ -207,7 +207,7 @@ void RasterDisplay::RunGLFWWindow()
     OpenGLInternalData data = InitInternal(rs.rtImageW.load(), rs.rtImageH.load());
     u32 last_h = rs.rtImageH.load();
 
-    Raster::SetupRaster();
+    Raster::SetupRaster(window, &rs);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -216,7 +216,7 @@ void RasterDisplay::RunGLFWWindow()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        Overlay::Display();
+        Overlay::Display(window);
 
         ImGui::Render();
 

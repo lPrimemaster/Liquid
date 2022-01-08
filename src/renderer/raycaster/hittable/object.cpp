@@ -82,7 +82,12 @@ Object* Object::CreateSphere(Vector3 center, f32 radius, Material* material)
     o->model = new Model(); // NOTE: This a pointer for later instancing maybe
     o->model->material = material;
     o->model->mesh = Geometry::GetGeometry("Sphere");
-    o->transform.tmatrix = Matrix4::Translation(center) * Matrix4::Scale(radius, radius, radius);
+    o->model->mesh->type = Geometry::SPHERE;
+    o->transform.tmatrix = Matrix4::Scale(radius, radius, radius) * Matrix4::Translation(center);
+    // o->transform.tmatrix.data[0][0] *= 2; // ??? Why ???
+    // o->transform.tmatrix.data[1][1] *= 2;
+    // o->transform.tmatrix.data[2][2] *= 2;
+    // o->transform.tmatrix.data[3][3] *= 2;
     o->transform.position = center;
     o->transform.scaleValue.x = radius; // Use scaleValue.x for the radius
     o->hit = HitSphere;
@@ -123,6 +128,7 @@ Object* Object::CreateMesh(const std::string& geometryName, Material* material)
     o->model = new Model(); // NOTE: This a pointer for later instancing maybe
     o->model->material = material;
     o->model->mesh = Geometry::GetGeometry(geometryName);
+    o->model->mesh->type = Geometry::TRIMESH;
     // o->transform.tmatrix = Matrix4::Translation(center) * Matrix4::Scale(radius, radius, radius);
     // o->transform.position = center;
     o->transform.scaleValue = Vector3(1, 1, 1);

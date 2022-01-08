@@ -13,7 +13,8 @@ namespace Overlay
 // However custom hit functions objects need to be vertex generated for realtime manipulation.
 namespace Raster
 {
-    void SetupRaster();
+    void SetupRaster(GLFWwindow* window, Overlay::RenderSettings* rs);
     void CleanRaster();
     void RenderRaster(GLFWwindow* window, Scene* world, Overlay::RenderSettings* rs);
+    void UpdateRasterSceneOnLoad(Scene* world);
 }

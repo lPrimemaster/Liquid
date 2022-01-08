@@ -31,9 +31,9 @@ struct Matrix4
     inline static Matrix4 Translation(const Vector3& v)
     {
         Matrix4 m = Identity();
-        m.data[0][3] = v.x;
-        m.data[1][3] = v.y;
-        m.data[2][3] = v.z;
+        m.data[3][0] = v.x;
+        m.data[3][1] = v.y;
+        m.data[3][2] = v.z;
         return m;
     }
 

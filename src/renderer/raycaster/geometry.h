@@ -9,6 +9,13 @@
 
 struct Geometry
 {
+    enum Type
+    {
+        SPHERE,
+        TRIMESH,
+        TYPESIZE
+    } type;
+    
     static void RegisterGeometry(std::string name, Geometry* geometry);
     static std::vector<Geometry*> GetAllGeometry();
     static Geometry* GetGeometry(std::string name);

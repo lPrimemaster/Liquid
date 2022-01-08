@@ -6,9 +6,9 @@
 
 void calculateChunk(JobContext* ctx, std::mutex* img_mtx)
 {
-    img_mtx->lock();
-    std::cerr << "info: Starting Job " << ctx->id << "\n";
-    img_mtx->unlock();
+    // img_mtx->lock();
+    // std::cerr << "info: Starting Job " << ctx->id << "\n";
+    // img_mtx->unlock();
 
     f32 scale = 1.0f / ctx->spp;
     f32 localLinePct = 100 / (f32)(ctx->jspan * ctx->numJobs);

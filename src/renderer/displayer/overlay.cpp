@@ -1,4 +1,5 @@
 #include "overlay.h"
+#include "raster/raster.h"
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui_internal.h"
@@ -78,7 +79,7 @@ namespace ImGui
     }
 }
 
-internal void LoadingWindow(const std::string& title, std::atomic<i32>* flag, void (*onFinish)(), bool add_cond = false)
+internal void LoadingWindow(GLFWwindow* window, const std::string& title, std::atomic<i32>* flag, void (*onFinish)(GLFWwindow*), bool add_cond = false)
 {
     const ImGuiWindowFlags flags = 
         ImGuiWindowFlags_NoMove |
@@ -110,7 +111,7 @@ internal void LoadingWindow(const std::string& title, std::atomic<i32>* flag, vo
 
     if(progress >= 100.0f || add_cond)
     {
-        onFinish();
+        onFinish(window);
         flag->store(-1);
     }
 }
@@ -139,6 +140,10 @@ internal void DisplayMenuBar()
                 if(ImGui::MenuItem("SingleEarth"))
                 {
                     StartAsyncSceneLoad(Samples::SingleSphere);
+                }
+                if(ImGui::MenuItem("ColoredSpheres"))
+                {
+                    StartAsyncSceneLoad(Samples::ColoredSpheres);
                 }
                 ImGui::EndMenu();
             }
@@ -391,14 +396,18 @@ internal void DisplayRenderSave()
     }
 }
 
-void Overlay::Display()
+void Overlay::Display(GLFWwindow* window)
 {
     DisplayMenuBar();
     if(overlaySettings.displaySettings) DisplaySettings();
     if(overlaySettings.displayRenderSave) DisplayRenderSave();
 
     // Loading bars
-    if(loadingBarPct.load() >= 0) LoadingWindow("Loading", &loadingBarPct, [](){ renderSettings.world = sceneHandle.get(); });
+    if(loadingBarPct.load() >= 0) LoadingWindow(window, "Loading", &loadingBarPct, [](GLFWwindow* window){ 
+        renderSettings.world = sceneHandle.get();
+        Raster::UpdateRasterSceneOnLoad(&renderSettings.world);
+        glfwSetWindowUserPointer(window, &renderSettings.world);
+    });
     if(renderBarPct.load() >= 0) 
     {
         // FIX: Don't do this dumb stuff... Atomic and mutex ?? Why am I so lazy
@@ -406,7 +415,7 @@ void Overlay::Display()
             std::lock_guard<std::mutex> lock(renderBarMtx);
             renderBarPct.store((i32)renderBarPctFloating);
         }
-        LoadingWindow("Rendering", &renderBarPct, [](){ 
+        LoadingWindow(window, "Rendering", &renderBarPct, [](GLFWwindow* window){ 
                 lastRenderRes = RENDER_SETTINGS_LOAD(rtImageH);
                 lastRenderSpp = RENDER_SETTINGS_LOAD(rtSamples);
                 lastRenderTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
